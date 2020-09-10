@@ -4,7 +4,7 @@ export default {
     login(username,password){
         return request({
             url:'/login',
-            method:'POST',
+            method:'post',
             data:{
                 username,
                 password
