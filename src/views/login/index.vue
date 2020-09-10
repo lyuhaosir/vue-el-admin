@@ -9,19 +9,21 @@
           :model="formLogin"
           status-icon
           :rules="rules"
-          ref="ruleForm"
-          label-width="100px"
+          ref="formLogin"
           class="demo-ruleForm"
         >
-          <el-form-item label="" prop="username">
+          <el-form-item label prop="username">
             <el-input type="password" v-model="formLogin.username" placeholder="请输入用户名"></el-input>
           </el-form-item>
-          <el-form-item label="" prop="password">
+          <el-form-item label prop="password">
             <el-input type="password" v-model="formLogin.password" placeholder="请输入密码"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-            
+            <el-button
+              type
+              style="width:100%;background:#008080;color:white"
+              @click="submitForm('formLogin')"
+            >立即登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -30,15 +32,43 @@
 </template>
 
 <script>
+import LoginApi from '@/api/login'
 export default {
   name: "",
   data() {
     return {
-      formLogin:{
-        username:'',
-        password:''
+      formLogin: {
+        username: "",
+        password: ""
+      },
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" }
+        ]
       }
     };
+  },
+  methods: {
+    submitForm(formLogin) {
+      this.$refs[formLogin].validate(valid => {
+        // console.log(valid);
+        if (valid) {
+          LoginApi.login(this.formLogin.username,this.formLogin.password).then(res=>{
+            console.log(res);
+          }).catch(error=>{
+            console.log(error);
+          })
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    }
   },
   //生命周期 - 创建完成（访问当前this实例）
   created() {},

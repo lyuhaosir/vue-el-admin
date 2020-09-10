@@ -1,9 +1,14 @@
 import request from '../utils/request'
 
 export default {
-    login(){
+    login(username,password){
         return request({
-            url:''
+            url:'/login',
+            method:'POST',
+            data:{
+                username,
+                password
+            }
         })
     }
 }
