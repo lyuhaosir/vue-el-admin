@@ -12,7 +12,7 @@ const loading = {
     open(){
         if(this.loadingInstance == null){
             Loading.service({
-                target:'.main',
+                target:'.app-main',
                 text:"正在加载中",
                 background:"rgba(0,0,0,0.5)"
             })
