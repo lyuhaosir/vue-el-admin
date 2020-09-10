@@ -10,5 +10,14 @@ export default {
                 password
             }
         })
+    },
+    login_out(token){
+        return request({
+            url:'/logout',
+            method:'post',
+            data:{
+                token
+            }
+        })
     }
 }

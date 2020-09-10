@@ -7,10 +7,10 @@
           v-for="(item, i) in headerList"
           :key="i"
           @click="topList(i)"
-          :class="activeIndex == i?'active':''"
+          :class="$route.name == headerList[i].desc?'active':''"
         >{{ item.name }}</li>
       </ul>
-      <el-dropdown class="right">
+      <el-dropdown class="right" @command='handleCommand'>
         <span class="el-dropdown-link">
           <div class="block">
             <el-avatar :size="28" :src="this.list.avatar"></el-avatar>
@@ -19,8 +19,8 @@
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>修改</el-dropdown-item>
-          <el-dropdown-item>退出</el-dropdown-item>
+          <el-dropdown-item command='a'>修改</el-dropdown-item>
+          <el-dropdown-item command='b'>退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -28,22 +28,47 @@
 </template>
 
 <script>
+import loginApi from '@/api/login'
 export default {
   name: "",
   data() {
     return {
       list: {},
       headerList: [],
-      activeIndex: 0
+      activeId: 0
     };
   },
   methods: {
     topList(i) {
-      this.activeIndex = i;
+      this.activeId = this.headerList[i].id;
+      // console.log(this.$route.name);
+      // console.log();
       const a = this.headerList[i].desc
       const str = a.replace(/_/g,'/')
       // console.log(this.headerList[i].child);
       this.$router.push('/'+str)
+    },
+    handleCommand(command){
+      let  str = command;
+      switch (str) {
+        case 'a':
+            console.log(修改);
+          break;
+        case 'b':   //退出登录
+            const token = localStorage.getItem('admin_token')
+            // console.log(token);
+            // loginApi.login_out(token).then(res=>{
+            //   console.log(res);
+            // })
+            localStorage.removeItem('admin_token')
+            localStorage.removeItem('admin_info')
+            this.$message.success('退出成功')
+            this.$router.push('/login')
+          break;
+      
+        default:
+          break;
+      }
     }
   },
   //生命周期 - 创建完成（访问当前this实例）
@@ -53,7 +78,7 @@ export default {
     //本人信息
     this.list = data;
     this.headerList = data.tree;
-    console.log(this.headerList);
+    // console.log(this.headerList);
     //分类信息
     // const list = data.role.rules;
     //顶级分类

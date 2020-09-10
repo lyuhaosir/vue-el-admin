@@ -73,7 +73,7 @@ export default {
               if (res.msg == 'ok') {
                 localStorage.setItem("admin_token", res.data.token);
                 localStorage.setItem("admin_info", JSON.stringify(res.data));
-                this.$message('登陆成功')
+                this.$message.success('登陆成功')
                 this.$router.push('/')
               }else{
                 this.$message.warning('登录失败,请重新登录')

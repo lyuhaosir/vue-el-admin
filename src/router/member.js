@@ -14,7 +14,7 @@ const member = [
         children: [
             {
                 path:'/user/user-list/list',
-                name:'user-list_list',
+                name:'user_user-list_list',
                 component:List,
                 meta:{
                     title:'会员列表'
@@ -22,7 +22,7 @@ const member = [
             },
             {
                 path:'/user/user-level/list',
-                name:'user-level_list',
+                name:'user_user-level_list',
                 component:Grade,
                 meta:{
                     title:'会员等级'

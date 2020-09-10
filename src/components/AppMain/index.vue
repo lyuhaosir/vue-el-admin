@@ -1,5 +1,6 @@
 <template>
   <div class='app-main'>
+    <crumbs />
     <div class="main">
       <router-view />
     </div>
@@ -7,7 +8,9 @@
 </template>
 
 <script>
+import crumbs from './line'
 export default {
+  components:{crumbs},
 name:"",
 data() {
 return {

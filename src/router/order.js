@@ -13,7 +13,7 @@ const order = [
         children: [
             {
                 path:'/order/order/list',
-                name:'order_list',
+                name:'order_order_list',
                 component:Order_m,
                 meta:{
                     title:'订单管理'
@@ -21,7 +21,7 @@ const order = [
             },
             {
                 path:'/order/invoice/list',
-                name:'invoice_list',
+                name:'order_invoice_list',
                 component:invoice,
                 meta:{
                     title:'发票管理'
@@ -29,7 +29,7 @@ const order = [
             },
             {
                 path:'/order/after-sale/list',
-                name:'after-sale_list',
+                name:'order_after-sale_list',
                 component:after_sale,
                 meta:{
                     title:'售后服务'
