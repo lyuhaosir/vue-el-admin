@@ -7,47 +7,36 @@ import transaction from '@/views/setting/transaction'   //交易设置
 
 const setting = [
     {
-        path: '/set',
-        name:'set',
-        component: Setting,
-        meta:{title:'设置'},
-        redirect:'/set/base',
-        children: [
-            {
-                path:'/set/base',
-                name:'set_base',
-                component:Basics,
-                meta:{
-                    title:'基础设置'
-                }
-            },
-            {
-                path:'/set/express',
-                name:'set_express',
-                component:Logistics,
-                meta:{
-                    title:'物流设置'
-                }
-            },
-            {
-                path:'/set/manager',
-                name:'set_manager',
-                component:Admin,
-                meta:{
-                    title:'管理员设置'
-                }
-            },
-            {
-                path:'/set/payment',
-                name:'set_payment',
-                component:transaction,
-                meta:{
-                    title:'交易设置'
-                }
-            },
-
-            
-        ]
+        path: '/set/base',
+        name: 'set_base',
+        component: Basics,
+        meta: {
+            title: '基础设置'
+        }
+    },
+    {
+        path: '/set/express',
+        name: 'set_express',
+        component: Logistics,
+        meta: {
+            title: '物流设置'
+        }
+    },
+    {
+        path: '/set/manager',
+        name: 'set_manager',
+        component: Admin,
+        meta: {
+            title: '管理员设置'
+        }
+    },
+    {
+        path: '/set/payment',
+        name: 'set_payment',
+        component: transaction,
+        meta: {
+            title: '交易设置'
+        }
     }
 ]
 

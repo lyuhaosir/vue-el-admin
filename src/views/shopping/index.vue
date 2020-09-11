@@ -35,16 +35,17 @@ export default {
   props: [],
   name: "",
   data() {
-    return {};
+    return {
+    };
   },
   //生命周期 - 创建完成（访问当前this实例）
   created() {
     this.$nextTick(() => {
       const list = JSON.parse(localStorage.getItem("admin_info")).tree;
-      const a = list.filter(item => {
+      const data = list.filter(item => {
         return item.desc == this.$route.name;
       });
-      console.log(a);
+      // console.log(data);
     });
   },
   //生命周期 - 挂载完成（访问DOM元素）

@@ -7,7 +7,7 @@
           v-for="(item, i) in headerList"
           :key="i"
           @click="topList(i)"
-          :class="$route.name == headerList[i].desc?'active':''"
+          :class=" activeIndex == i?'active':''"
         >{{ item.name }}</li>
       </ul>
       <el-dropdown class="right" @command='handleCommand'>
@@ -35,12 +35,13 @@ export default {
     return {
       list: {},
       headerList: [],
-      activeId: 0
+      activeIndex:0
     };
   },
   methods: {
     topList(i) {
-      this.activeId = this.headerList[i].id;
+      this.$store.commit('getHeadIndex',i)
+      this.activeIndex = i;
       // console.log(this.$route.name);
       // console.log();
       const a = this.headerList[i].desc
@@ -73,6 +74,8 @@ export default {
   },
   //生命周期 - 创建完成（访问当前this实例）
   created() {
+    
+    this.activeIndex = JSON.parse(localStorage.getItem('admin_NavBar')).active
     //获取本地存储的数据
     const data = JSON.parse(localStorage.getItem("admin_info"));
     //本人信息
