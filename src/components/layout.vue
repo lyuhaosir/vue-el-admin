@@ -14,8 +14,7 @@ export default {
     return {};
   },
   //生命周期 - 创建完成（访问当前this实例）
-  created() {
-  },
+  created() {},
   //生命周期 - 挂载完成（访问DOM元素）
   mounted() {}
 };
@@ -42,8 +41,11 @@ export default {
   bottom: 0;
   left: 0;
   ul {
+    box-sizing: border-box;
     background: white;
     height: 100%;
+    border-right: 1px solid #dee2e6 !important;
+    border-bottom: 1px solid #dee2e6;
     li {
       height: 56px;
       line-height: 56px;

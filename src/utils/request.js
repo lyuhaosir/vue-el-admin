@@ -31,7 +31,10 @@ const loading = {
 
 
 Server.interceptors.request.use(config => {
+    const token = localStorage.getItem('admin_token')? localStorage.getItem('admin_token') : "";
+    // console.log(token);
     
+    config.headers.token = token;
     // Do something before request is sent
     return config;
 }, error => {

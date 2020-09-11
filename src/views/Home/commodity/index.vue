@@ -1,5 +1,9 @@
 <template>
-  <div class>{{$route.meta.title}}</div>
+  <div class>
+    <div class='header'>
+      
+    </div>
+  </div>
 </template>
 
 <script>
@@ -15,6 +19,6 @@ export default {
   mounted() {}
 };
 </script>
-<style scoped>
+<style scoped lang='scss'>
 /* @import url(); 引入css类 */
 </style>
