@@ -63,11 +63,11 @@
           <div class="box">
             <el-col :span="8" v-for="(item, i) in imageList" :key="i">
               <el-card :body-style="{ padding: '0px' }">
-                <img :src="item.url" class="image" :preview-src-list="srcList" />
+                <img :src="item.url" class="image" />
                 <div class="imgOpacity"><p>{{item.path}}</p></div>
                 <div class="el-button-text">
                   <el-button-group>
-                    <el-button size="mini" type="" icon="el-icon-view"></el-button>
+                    <el-button size="mini" type="" icon="el-icon-view" :preview-src-list="srcList" ></el-button>
                     <el-button size="mini" type="" icon="el-icon-edit"></el-button>
                     <el-button size="mini" type="" icon="el-icon-delete"></el-button>
                   </el-button-group>
@@ -123,7 +123,7 @@ export default {
       //右侧数据列表
       imageList: [],
       //大图模式
-      srcList:[]
+      srcList:''
     };
   },
   methods: {
@@ -146,7 +146,7 @@ export default {
       imageApi.getImageNav(this.page, this.pageSize).then(res => {
         if (res.msg == "ok") {
           this.imgNavList = res.data.list;
-          // console.log(res.data);
+          // console.log(res.data.list);
           this.navId = res.data.list[0].id;
           this.total = res.data.totalCount;
         }
@@ -159,7 +159,7 @@ export default {
         .then(res => {
           // console.log(res);
           if (res.msg == "ok") {
-            // console.log(res.data.list);
+            console.log(res.data.list);
             this.imageList = res.data.list;
           }
         });

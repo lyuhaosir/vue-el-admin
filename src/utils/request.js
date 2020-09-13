@@ -10,45 +10,50 @@ const Server = axios.create({
 const loading = {
     loadingInstance:null,
     open(){
-        if(this.loadingInstance == null){
-            Loading.service({
+        if(this.loadingInstance === null){
+            this.loadingInstance =Loading.service({
                 target:'.app-main',
-                text:"正在加载中",
-                background:"rgba(0,0,0,0.5)"
+                text:'正在加载中',
+                background:"rgba(255,255,255,0.3)"
             })
-        }else{
-            this.loadingInstance = null
         }
     },
     close(){
-        if(this.loadingInstance != null){
+        if(this.loadingInstance !== null){
             this.loadingInstance.close()
         }
         this.loadingInstance = null
     }
-
 }
 
 
+
+
 Server.interceptors.request.use(config => {
-    const token = localStorage.getItem('admin_token')? localStorage.getItem('admin_token') : "";
-    // console.log(token);
+    console.log('请求拦截');
     
+    loading.open()
+    const token = localStorage.getItem('admin_token') ? localStorage.getItem('admin_token') : "";
+    // console.log(token);
     config.headers.token = token;
     // Do something before request is sent
     return config;
 }, error => {
+    loading.close()
     // Do something with request error
     return Promise.reject(error);
 });
 
 Server.interceptors.response.use(response => {
+    console.log('响应拦截');
     // Do something before response is sent
-    if(response.status==200){
+    loading.close()
+    if (response.status == 200) {
         return response.data
     }
     return response;
 }, error => {
+    loading.close()
     // Do something with response error
     return Promise.reject(error);
 });
