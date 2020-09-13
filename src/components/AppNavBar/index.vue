@@ -48,6 +48,9 @@ export default {
       // console.log(item);
       // console.log(item.pathname);
       let name = item.pathname;
+      if (item.pathname == "shop_goods_list") {
+        this.$store.commit("getHeadIndex",1);
+      }
       this.$router.push({ name: name });
     }
   },
@@ -74,7 +77,7 @@ export default {
   //生命周期 - 创建完成（访问当前this实例）
   created() {
     const a = JSON.parse(localStorage.getItem("admin_NavBar")).active;
-    this.$store.commit('getHeadIndex',a)
+    this.$store.commit("getHeadIndex", a);
   },
   //生命周期 - 挂载完成（访问DOM元素）
   mounted() {}
