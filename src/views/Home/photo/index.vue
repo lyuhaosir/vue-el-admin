@@ -3,8 +3,8 @@
     <div class="header">
       <div class="head-left">
         <el-form :inline="true" :model="formSearch" class="demo-form-inline">
-          <el-form-item label>
-            <el-select size="mini" v-model="formSearch.sort" placeholder>
+          <el-form-item label prop="sort">
+            <el-select size="mini" :v-model="formSearch.sort" value="降序" placeholder>
               <el-option label="降序" value="降序"></el-option>
               <el-option label="升序" value="升序"></el-option>
             </el-select>
@@ -18,8 +18,8 @@
         </el-form>
       </div>
       <div class="head-right">
-        <el-button type="success" size="mini">创建相册</el-button>
-        <el-button type="warning" size="mini">上传图片</el-button>
+        <el-button type="success" size="mini" @click="addAlbumDialog=true">创建相册</el-button>
+        <el-button type="warning" size="mini" @click="addImageDialog=true">上传图片</el-button>
       </div>
     </div>
     <div class="body">
@@ -33,14 +33,14 @@
               @click="getImgList(item,i)"
             >
               <span class="text">{{item.name}}</span>
-              <el-dropdown>
+              <el-dropdown @command="switchAlbum">
                 <el-button size="mini" type="1">
                   <span>{{imgNavList[i].images_count}}</span>
                   <i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>修改</el-dropdown-item>
-                  <el-dropdown-item>删除</el-dropdown-item>
+                  <el-dropdown-item :command="beforeHandleCommand(item,'a')">修改</el-dropdown-item>
+                  <el-dropdown-item :command="beforeHandleCommand(item,'b')">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
@@ -64,12 +64,14 @@
             <el-col :span="8" v-for="(item, i) in imageList" :key="i">
               <el-card :body-style="{ padding: '0px' }">
                 <img :src="item.url" class="image" />
-                <div class="imgOpacity"><p>{{item.path}}</p></div>
+                <div class="imgOpacity">
+                  <p>{{item.name}}</p>
+                </div>
                 <div class="el-button-text">
                   <el-button-group>
-                    <el-button size="mini" type="" icon="el-icon-view" :preview-src-list="srcList" ></el-button>
-                    <el-button size="mini" type="" icon="el-icon-edit"></el-button>
-                    <el-button size="mini" type="" icon="el-icon-delete"></el-button>
+                    <el-button size="mini" type icon="el-icon-view" :preview-src-list="srcList"></el-button>
+                    <el-button size="mini" type @click="changeSolaImg(item)" icon="el-icon-edit"></el-button>
+                    <el-button size="mini" type @click="removeSolaImg(item)" icon="el-icon-delete"></el-button>
                   </el-button-group>
                 </div>
               </el-card>
@@ -87,19 +89,96 @@
         </footer>
       </div>
     </div>
+
+    <!-- 添加相册 -->
+    <el-dialog title="创建相册" :visible.sync="addAlbumDialog">
+      <el-form :model="addForm" :rules="addalbum" ref="addForm">
+        <el-form-item label="相册名称" label-width="80px" prop="name">
+          <el-input v-model="addForm.name" placeholder="请输入相册名称"></el-input>
+        </el-form-item>
+        <el-form-item label="相册排序" label-width="80px">
+          <el-input-number v-model="addForm.order" :min="0" label></el-input-number>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addAlbumDialog = false">取 消</el-button>
+        <el-button type="primary" @click="addAlbum('addForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 修改相册 -->
+    <el-dialog title="修改相册" :visible.sync="changeAlbumDialog">
+      <el-form :model="changeForm" :rules="changealbum" ref="addForm">
+        <el-form-item label="相册名称" label-width="80px" prop="name">
+          <el-input v-model="changeForm.name" placeholder="请输入相册名称"></el-input>
+        </el-form-item>
+        <el-form-item label="相册排序" label-width="80px">
+          <el-input-number v-model="changeForm.order" :min="0" label></el-input-number>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="changeAlbumDialog = false">取 消</el-button>
+        <el-button type="primary" @click="alterAlbum('addAlbum')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 上传图片 -->
+    <el-dialog title="上传图片" @close="closeDialog" :visible.sync="addImageDialog">
+      <div class="text-center">
+      <el-upload
+        class="upload-demo"
+        drag
+        action
+        multiple
+        ref="upload"
+        :on-change="handleChange"
+        :auto-upload="false"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          将文件拖到此处，或
+          <em>点击上传</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import request from "@/utils/request";
 import imageApi from "@/api/photo";
 export default {
   name: "",
   data() {
     return {
+      //升序降序
       formSearch: {
-        sort: "降序",
+        sort: "desc",
         imgName: ""
       },
+      //添加相册
+      addForm: {
+        order: 0,
+        name: ""
+      },
+      //修改相册
+      changeForm: {
+        id: 0,
+        order: 0,
+        name: ""
+      },
+      //添加相册规则验证
+      addalbum: {
+        name: [{ required: true, message: "请输入相册名称", trigger: "blur" }]
+      },
+      //修改相册规则验证
+      changealbum: {
+        name: [{ required: true, message: "请输入相册名称", trigger: "blur" }]
+      },
+      addAlbumDialog: false,
+      addImageDialog: false,
+      changeAlbumDialog: false,
+      fileList: [],
       //nav总条数
       total: 0,
       //nav页数
@@ -110,8 +189,6 @@ export default {
       imgNavList: [],
       //触发时的索引值
       activeIndex: 0,
-      //排序
-      order: "",
       //右侧总条数
       listTotal: 0,
       //右侧页码
@@ -119,19 +196,185 @@ export default {
       //右侧每页显示的条数
       listPageSize: 10,
       //nvaId
-      navId: 239,
+      navId: 238,
       //右侧数据列表
       imageList: [],
       //大图模式
-      srcList:''
+      srcList: ""
     };
   },
   methods: {
+    //上传图片
+    handleChange(file, fileList) {
+      // console.log(this.fileList);
+      let formDatas = new FormData();
+      formDatas.append("file", fileList);
+      console.log(Object.prototype.toString.call(formDatas));
+      
+      imageApi.setImage(formDatas, this.navId).then(res => {
+        console.log(res);
+      });
+      // console.log(formDatas);
+      // console.log(formDatas.file);
+      
+    },
+    closeDialog() {
+      console.log(1);
+      this.getImageList();
+    },
+    //获取当前要修改属性的id
+    beforeHandleCommand(item, command) {
+      return {
+        item: item,
+        command: command
+      };
+    },
+    //添加相冊
+    addAlbum(addForm) {
+      this.$refs[addForm].validate(valid => {
+        if (valid) {
+          imageApi.setAlbum(this.addForm.order, this.addForm.name).then(res => {
+            if (res.msg == "ok") {
+              this.getImageNav();
+              this.addAlbumDialog = false;
+              console.log(res);
+            } else {
+              console.log(error);
+            }
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    //删除相册
+    removeAlbum(item) {
+      console.log(item.id);
+      this.$confirm("是否删除该相册？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          imageApi.removeAlbum(item.id).then(res => {
+            if (res.msg == "ok") {
+              // this.navId =
+              this.$message.success("删除成功");
+              this.getImageNav();
+            } else {
+              console.log("remove error");
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    //修改相册
+    changeAlbum(item) {
+      // console.log(item);
+      this.changeForm.id = item.id;
+      this.changeForm.name = item.name;
+      this.changeForm.order = item.order;
+      // console.log(item.id,item.name,item.order);
+      this.changeAlbumDialog = true;
+    },
+    //修改相册
+    alterAlbum() {
+      imageApi
+        .changeAlbum(
+          this.changeForm.id,
+          this.changeForm.name,
+          this.changeForm.order
+        )
+        .then(res => {
+          if (res.msg == "ok") {
+            this.getImageNav();
+            this.changeAlbumDialog = false;
+            this.$message.success("修改成功");
+          } else {
+            this.changeAlbumDialog = false;
+            console.log("change error");
+          }
+        });
+    },
+    //switch删除与修改相册
+    switchAlbum(command) {
+      switch (command.command) {
+        case "a":
+          this.changeAlbum(command.item);
+          break;
+        case "b":
+          this.removeAlbum(command.item);
+          break;
+
+        default:
+          break;
+      }
+
+      // imageApi.removeAlbum(id).then(res => {
+      //   this.getImageNav();
+      //   this.$message.success("删除成功");
+      // });
+    },
+    //删除单张图片
+    removeSolaImg(item) {
+      console.log(item);
+      imageApi.removeSolaImg(item.id).then(res => {
+        if (res.msg == "ok") {
+          this.getImageList();
+          this.getImageNav();
+        } else {
+          console.log("remove error");
+        }
+      });
+    },
+    //修改单张图片名称
+    changeSolaImg(item) {
+      this.$prompt("请输入新昵称", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputValue: item.name,
+        inputPattern: /\S/,
+        inputErrorMessage: "图片名称不能为空"
+      })
+        .then(({ value }) => {
+          imageApi.changeSolaImg(item.id, value).then(res => {
+            if (res.msg == "ok") {
+              this.$message({
+                type: "success",
+                message: "修改成功"
+              });
+              this.getImageList();
+            } else {
+              console.log("changeSolaImg error");
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入"
+          });
+        });
+    },
+    //上传图片
+    addFile(file) {
+      imageApi.setImage(file, this.navId).then(res => {
+        console.log(res);
+      });
+      this.addImageDialog = false;
+    },
+    //点击nav导航获取右侧图片列表
     getImgList(item, i) {
       this.activeIndex = i;
       this.navId = item.id;
       // console.log(item.id);
-      
+
       this.getImageList();
       // console.log(item.id);
     },
@@ -139,7 +382,7 @@ export default {
     handleCurrentChange(page) {
       // console.log(page);
       this.page = page;
-      this.getImageList();
+      this.getImageNav();
     },
     //请求导航数据
     getImageNav() {
@@ -155,11 +398,16 @@ export default {
     //请求图片列表数据
     getImageList() {
       imageApi
-        .getImageList(this.navId, this.page, this.pageSize, this.order)
+        .getImageList(
+          this.navId,
+          this.page,
+          this.pageSize,
+          this.formSearch.sort
+        )
         .then(res => {
           // console.log(res);
           if (res.msg == "ok") {
-            console.log(res.data.list);
+            // console.log(res.data.list);
             this.imageList = res.data.list;
           }
         });
@@ -168,6 +416,7 @@ export default {
   //生命周期 - 创建完成（访问当前this实例）
   created() {
     this.getImageNav();
+    // console.log(this.navId);
 
     this.getImageList();
   },
@@ -297,19 +546,19 @@ export default {
           transition: 0.3s;
           cursor: pointer;
           position: relative;
-          .imgOpacity{
+          .imgOpacity {
             position: absolute;
             left: 1px;
             right: 1px;
-            top: 76px;  
-            background: rgba(0,0,0,0.5);
+            top: 76px;
+            background: rgba(0, 0, 0, 0.5);
             height: 24px;
             line-height: 24px;
-            p{
+            p {
               color: white;
               padding-left: 10px;
               box-sizing: border-box;
-              opacity: 1!important;
+              opacity: 1 !important;
               width: 100%;
               font-size: 13px;
             }
@@ -319,16 +568,16 @@ export default {
             height: 100px;
             cursor: pointer;
           }
-          .el-button-text{
+          .el-button-text {
             padding: 8px;
             box-sizing: border-box;
             height: 47px !important;
             text-align: center;
           }
-          
-          .el-button-group{
+
+          .el-button-group {
             margin: 0 auto;
-            button{
+            button {
               padding: 8px;
             }
           }

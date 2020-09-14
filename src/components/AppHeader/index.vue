@@ -56,15 +56,17 @@ export default {
             console.log(修改);
           break;
         case 'b':   //退出登录
-            const token = localStorage.getItem('admin_token')
-            // console.log(token);
-            // loginApi.login_out(token).then(res=>{
-            //   console.log(res);
-            // })
-            localStorage.removeItem('admin_token')
-            localStorage.removeItem('admin_info')
-            this.$message.success('退出成功')
-            this.$router.push('/login')
+            loginApi.login_out().then(res=>{
+              if(res.msg=='ok'){
+                
+                localStorage.removeItem('admin_token')
+                localStorage.removeItem('admin_info')
+                this.$message.success('退出成功')
+                this.$router.push('/login')
+              }else{
+                console.log('loginout error')
+              }
+            })
           break;
       
         default:

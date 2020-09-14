@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     NavBar: {
       active: 0,
-      list: [],
+      list: []
     }
   },
   mutations: {

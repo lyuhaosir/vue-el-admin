@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { Loading } from 'element-ui'
+import { Loading,Message } from 'element-ui'
 
 const Server = axios.create({
     baseURL: process.env.VUE_APP_BASE_API,
@@ -30,7 +30,7 @@ const loading = {
 
 
 Server.interceptors.request.use(config => {
-    console.log('请求拦截');
+    // console.log('请求拦截');
     
     loading.open()
     const token = localStorage.getItem('admin_token') ? localStorage.getItem('admin_token') : "";
@@ -45,7 +45,7 @@ Server.interceptors.request.use(config => {
 });
 
 Server.interceptors.response.use(response => {
-    console.log('响应拦截');
+    // console.log('响应拦截');
     // Do something before response is sent
     loading.close()
     if (response.status == 200) {
@@ -54,6 +54,7 @@ Server.interceptors.response.use(response => {
     return response;
 }, error => {
     loading.close()
+    Message.warning('请求超时')
     // Do something with response error
     return Promise.reject(error);
 });

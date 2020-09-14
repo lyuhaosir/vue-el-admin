@@ -11,13 +11,10 @@ export default {
             }
         })
     },
-    login_out(token){
+    login_out(){
         return request({
             url:'/logout',
-            method:'post',
-            data:{
-                token
-            }
+            method:'post'
         })
     }
 }
