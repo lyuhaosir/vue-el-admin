@@ -1,10 +1,10 @@
-import Shopping from '@/views/shopping'
 
 import Category from '@/views/shopping/category'            //分类列表
 import ShopComment from '@/views/shopping/shopComment'      //商品评论
 import ShopList from '@/views/shopping/shopList'            //商品列表
 import ShopType from '@/views/shopping/shopType'            //商品类型
 import Specification from '@/views/shopping/specification'  //商品规格
+import ShopCreate from '@/views/shopping/shopList/shopcreate' //发布商品
 
 const shopping = [
 
@@ -47,7 +47,16 @@ const shopping = [
         meta: {
             title: "商品评论"
         }
-    }
+    },
+    {
+        path: '/shop/goods/create',
+        name: 'shop_goods_create',
+        component:ShopCreate,
+        meta: {
+            title: "创建商品"
+        }
+    },
+
 ]
 
 export default shopping

@@ -1,4 +1,4 @@
-import Setting from '@/views/setting'       //设置
+
 
 import Admin from '@/views/setting/admin'       //管理员管理
 import Basics from '@/views/setting/basics'     //基础设置

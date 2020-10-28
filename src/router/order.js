@@ -1,4 +1,4 @@
-import Order from '@/views/order/index'   //订单
+
 import Order_m from '@/views/order/order'   //订单管理
 import invoice from '@/views/order/invoice' //发票管理
 import after_sale from '@/views/order/after_sale' //售后服务

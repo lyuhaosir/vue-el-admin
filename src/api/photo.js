@@ -60,17 +60,6 @@ export default {
                 name
             }
         })
-    },
-    //上传图片
-    setImage(img,image_class_id){
-        return request({
-            url:'/image/upload',
-            method:'post',
-            data:{
-                img,
-                image_class_id
-            }
-        })
-    },
+    }
 
 }

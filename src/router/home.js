@@ -1,6 +1,5 @@
-import Home from '@/views/Home'
+
 import HomePage from '@/views/Home/home'        //后台首页
-import Commodity from '@/views/Home/commodity'  //相册管理
 import Photo from '@/views/Home/photo'          //商品管理
 
 const home = [

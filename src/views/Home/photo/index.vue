@@ -69,7 +69,7 @@
                 </div>
                 <div class="el-button-text">
                   <el-button-group>
-                    <el-button size="mini" type icon="el-icon-view" :preview-src-list="srcList"></el-button>
+                    <el-button size="mini" type @click='viewImage' icon="el-icon-view" :preview-src-list="srcList"></el-button>
                     <el-button size="mini" type @click="changeSolaImg(item)" icon="el-icon-edit"></el-button>
                     <el-button size="mini" type @click="removeSolaImg(item)" icon="el-icon-delete"></el-button>
                   </el-button-group>
@@ -126,11 +126,12 @@
       <el-upload
         class="upload-demo"
         drag
-        action
+        action='/dev-api/image/upload'
         multiple
-        ref="upload"
-        :on-change="handleChange"
-        :auto-upload="false"
+        name='img'
+        :headers='{token:token}'
+        :data="{image_class_id:navId}"
+        :on-success="handleChange"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
@@ -141,6 +142,12 @@
       </el-upload>
       </div>
     </el-dialog>
+    <!-- 查看大图 -->
+    <el-dialog
+    :visible.sync="viewImageShow"
+     width="30%"
+     class="viewImage">
+</el-dialog>
   </div>
 </template>
 
@@ -151,6 +158,10 @@ export default {
   name: "",
   data() {
     return {
+      //
+      token:'',
+      //查看大图
+      viewImageShow:false,
       //升序降序
       formSearch: {
         sort: "desc",
@@ -196,7 +207,7 @@ export default {
       //右侧每页显示的条数
       listPageSize: 10,
       //nvaId
-      navId: 238,
+      navId: 0,
       //右侧数据列表
       imageList: [],
       //大图模式
@@ -204,30 +215,19 @@ export default {
     };
   },
   methods: {
+    //查看大图
+    viewImage(){
+      this.viewImageShow=true;
+    },
     //上传图片
-    handleChange(file, fileList) {
-      // console.log(this.fileList);
-      let formDatas = new FormData();
-      formDatas.append("file", fileList);
-      console.log(Object.prototype.toString.call(formDatas));
+    handleChange(response, file, fileList) {
+      console.log(response);
       
-      imageApi.setImage(formDatas, this.navId).then(res => {
-        console.log(res);
-      });
-      // console.log(formDatas);
-      // console.log(formDatas.file);
       
     },
     closeDialog() {
-      console.log(1);
-      this.getImageList();
-    },
-    //获取当前要修改属性的id
-    beforeHandleCommand(item, command) {
-      return {
-        item: item,
-        command: command
-      };
+      this.getImageNav()
+      this.getImageList(this.navId)
     },
     //添加相冊
     addAlbum(addForm) {
@@ -302,13 +302,22 @@ export default {
           }
         });
     },
+    //获取当前要修改属性的id
+    beforeHandleCommand(item, command) {
+      return {
+        item: item,
+        command: command
+      };
+    },
     //switch删除与修改相册
     switchAlbum(command) {
       switch (command.command) {
         case "a":
+          //修改相册方法
           this.changeAlbum(command.item);
           break;
         case "b":
+          //删除相册方法
           this.removeAlbum(command.item);
           break;
 
@@ -326,7 +335,7 @@ export default {
       console.log(item);
       imageApi.removeSolaImg(item.id).then(res => {
         if (res.msg == "ok") {
-          this.getImageList();
+          this.getImageList(this.navId);
           this.getImageNav();
         } else {
           console.log("remove error");
@@ -349,7 +358,7 @@ export default {
                 type: "success",
                 message: "修改成功"
               });
-              this.getImageList();
+              this.getImageList(this.navId);
             } else {
               console.log("changeSolaImg error");
             }
@@ -374,8 +383,10 @@ export default {
       this.activeIndex = i;
       this.navId = item.id;
       // console.log(item.id);
+      // console.log(this.navId);
+      
 
-      this.getImageList();
+      this.getImageList(item.id);
       // console.log(item.id);
     },
     //切换页码
@@ -390,16 +401,23 @@ export default {
         if (res.msg == "ok") {
           this.imgNavList = res.data.list;
           // console.log(res.data.list);
-          this.navId = res.data.list[0].id;
+          // this.navId = res.data.list[0].id;
           this.total = res.data.totalCount;
+          this.navId = res.data.list[0].id
+          console.log(res.data.list[0].id);
+          
+          this.getImageList(res.data.list[0].id);
+
         }
       });
     },
     //请求图片列表数据
-    getImageList() {
+    getImageList(id) {
+      // console.log(id);
+      
       imageApi
         .getImageList(
-          this.navId,
+          id,
           this.page,
           this.pageSize,
           this.formSearch.sort
@@ -417,8 +435,13 @@ export default {
   created() {
     this.getImageNav();
     // console.log(this.navId);
-
-    this.getImageList();
+     console.log(this.navId);
+      
+      const a = localStorage.getItem('admin_token');
+      // console.log(a);
+      
+      this.token = a
+     
   },
   //生命周期 - 挂载完成（访问DOM元素）
   mounted() {}

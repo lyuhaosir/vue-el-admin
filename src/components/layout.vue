@@ -35,6 +35,7 @@ export default {
   box-sizing: border-box;
 }
 .app-nav-bar {
+  // min-height:900px;
   width: 200px;
   position: absolute;
   top: 60px;
@@ -72,11 +73,14 @@ export default {
   }
 }
 .app-main {
+  // min-height:532px;
   position: absolute;
   left: 200px;
   right: 0;
   top: 60px;
   bottom: 0;
   background: #f8f9fa;
+  overflow: hidden;
+  overflow:auto;
 }
 </style>

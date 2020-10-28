@@ -5,7 +5,7 @@
         <li
           v-for="(item,i) in NavList"
           :key="i"
-          :class="activeIndex==i?'NavActive':''"
+          :class="item.pathname==$route.name?'NavActive':''"
           @click="goMain(item,i)"
         >
           <i :class="item.icon"></i>
@@ -57,20 +57,11 @@ export default {
   computed: {
     NavList() {
       const list = JSON.parse(localStorage.getItem("admin_NavBar"));
-      const i = this.$store.state.NavBar.active;
-      // const a = JSON.parse(localStorage.getItem("admin_NavBar")).active;
-      // const navList= list.list[i].submenu
-      // const index = 0;
-      // console.log(a);
       // console.log(this.$route.name);
-      // const arr = []
-
-      // list.list[a].submenu.forEach(item=>{
-      //   arr.push(item.pathname)
-      // })
-      // const index = arr.indexOf('this.$route.name')
-      // console.log(index);
-
+      
+      
+      const i = this.$store.state.NavBar.active;
+      // console.log(list.list[i].submenu[0]);
       return list.list[i].submenu;
     }
   },

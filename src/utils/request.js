@@ -4,7 +4,7 @@ import { Loading,Message } from 'element-ui'
 
 const Server = axios.create({
     baseURL: process.env.VUE_APP_BASE_API,
-    timeout: 5000
+    timeout: ''
 })
 
 const loading = {

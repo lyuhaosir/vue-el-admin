@@ -1,4 +1,4 @@
-import Member from '@/views/member'     //会员
+
 
 import List from '@/views/member/list'  //会员列表
 import Grade from '@/views/member/grade'    //会员等级

@@ -6,6 +6,7 @@
       </el-breadcrumb-item>
       <el-breadcrumb-item style="color:#606266">{{this.$route.meta.title}}</el-breadcrumb-item>
     </el-breadcrumb>
+  <el-button v-show="this.$route.path == '/shop/goods/create'" size="mini" @click="$router.push('/shop/goods/list')">回到商品列表</el-button>
   </div>
 </template>
 
@@ -37,5 +38,10 @@ export default {
     font-weight: bolder;
     cursor: pointer;
   }
+}
+.el-button{
+  position: absolute;
+  top: 13px;
+  left: 200px;
 }
 </style>
